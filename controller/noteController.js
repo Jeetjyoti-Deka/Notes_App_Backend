@@ -23,4 +23,24 @@ const createNote = async (req, res) => {
   }
 };
 
-module.exports = { getAllNotes, createNote };
+const deleteNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    if (!noteId) {
+      return res.status(400).json({ error: "missing Id" });
+    }
+
+    const deletedNote = await Note.findByIdAndDelete(noteId);
+
+    if (!deletedNote) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    res.status(200).json({ message: "note deleted" });
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { getAllNotes, createNote, deleteNote };
