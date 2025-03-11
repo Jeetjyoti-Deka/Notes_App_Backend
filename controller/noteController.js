@@ -2,7 +2,7 @@ const Note = require("../models/Note");
 
 const getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find().select("-__v");
     res.status(200).json({ success: true, notes });
   } catch (error) {
     res.status(500).json({ error: "Error fetching notes" });
@@ -50,7 +50,8 @@ const editNote = async (req, res) => {
       return res.status(400).json({ error: "missing Id" });
     }
 
-    const note = req.body;
+    const { note } = req.body;
+
     const updatedNote = await Note.findByIdAndUpdate(noteId, note, {
       new: true,
       runValidators: true,
