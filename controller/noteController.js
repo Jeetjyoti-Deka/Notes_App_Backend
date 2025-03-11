@@ -43,4 +43,28 @@ const deleteNote = async (req, res) => {
   }
 };
 
-module.exports = { getAllNotes, createNote, deleteNote };
+const editNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    if (!noteId) {
+      return res.status(400).json({ error: "missing Id" });
+    }
+
+    const note = req.body;
+    const updatedNote = await Note.findByIdAndUpdate(noteId, note, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedNote) {
+      return res.status(404).json({ error: "Note not found" });
+    }
+
+    res.status(200).json({ success: true, note: updatedNote });
+  } catch (error) {
+    console.error("Error deleting note:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+module.exports = { getAllNotes, createNote, deleteNote, editNote };
